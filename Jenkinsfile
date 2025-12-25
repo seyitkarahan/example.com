@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        jdk 'JDK17'
+        jdk 'JDK21'
         maven 'Maven3'
     }
 
@@ -17,6 +17,7 @@ pipeline {
         stage('Run URL Availability Test') {
             steps {
                 sh 'mvn clean test'
+                junit 'target/surefire-reports/*.xml'
             }
         }
 
@@ -27,8 +28,8 @@ pipeline {
                 }
             }
             steps {
-                echo 'Deploy aşaması çalışıyor...'
-                sh 'echo "DEPLOY OK"'  // şimdilik dummy
+                echo '🚀 Deploy aşaması çalışıyor'
+                sh 'echo "DEPLOY OK"'
             }
         }
     }
