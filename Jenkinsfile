@@ -1,9 +1,8 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.9.9-eclipse-temurin-21'
-            args '-v /root/.m2:/root/.m2'
-        }
+    agent any
+
+    tools {
+        maven 'Maven3'
     }
 
     stages {
@@ -16,20 +15,29 @@ pipeline {
 
         stage('Run URL Availability Test') {
             steps {
-                sh 'java -version'
-                sh 'mvn -version'
                 sh 'mvn clean test'
-                junit 'target/surefire-reports/*.xml'
             }
         }
 
         stage('Deploy') {
             when {
-                expression { currentBuild.currentResult == 'SUCCESS' }
+                expression {
+                    currentBuild.currentResult == 'SUCCESS'
+                }
             }
             steps {
-                echo '🚀 Deploy aşaması çalışıyor'
+                echo 'Deploy aşaması çalışıyor...'
+                sh 'echo "DEPLOY OK"'  // şimdilik dummy
             }
+        }
+    }
+
+    post {
+        failure {
+            echo '❌ URL erişilemedi, pipeline fail oldu'
+        }
+        success {
+            echo '✅ URL erişilebilir, deploy başarılı'
         }
     }
 }
