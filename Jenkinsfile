@@ -1,7 +1,18 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'maven:3.9.9-eclipse-temurin-21'
+            args '-v /root/.m2:/root/.m2'
+        }
+    }
 
     stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
 
         stage('Run URL Availability Test') {
             steps {
@@ -13,8 +24,11 @@ pipeline {
         }
 
         stage('Deploy') {
+            when {
+                expression { currentBuild.currentResult == 'SUCCESS' }
+            }
             steps {
-                echo '🚀 Deploy OK'
+                echo '🚀 Deploy aşaması çalışıyor'
             }
         }
     }
